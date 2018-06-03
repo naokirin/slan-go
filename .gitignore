@@ -14,8 +14,8 @@
 # Vendor
 vendor/
 
-# configuration directory
-config/
+# configuration file
+config/slan-go.conf
 
 # sqlite db files
 *.db
