@@ -5,6 +5,7 @@ RUN mkdir -p /go/src/github.com/naokirin/slan-go
 ADD . /go/src/github.com/naokirin/slan-go
 WORKDIR /go/src/github.com/naokirin/slan-go
 RUN dep ensure -vendor-only=true
+RUN go build -o slan-go main.go
 
-CMD ["go", "run", "main.go"]
+CMD ["./slan-go"]
 
