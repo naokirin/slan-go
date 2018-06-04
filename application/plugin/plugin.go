@@ -3,16 +3,21 @@ package plugin
 import (
 	"fmt"
 
-	"github.com/naokirin/slan-go/application/plugin/memolist"
+	"github.com/naokirin/slan-go/domain/memolist"
 	"github.com/naokirin/slan-go/domain/plugin"
 	dslack "github.com/naokirin/slan-go/domain/slack"
 	"github.com/naokirin/slan-go/infrastructure/slack"
+	imemolist "github.com/naokirin/slan-go/infrastructure/sqlite/memolist"
 )
 
 var plugins = map[string]func(plugin.Config, *slack.Client, chan dslack.Message){
 	"memolist": func(config plugin.Config, client *slack.Client, in chan dslack.Message) {
-		memolist.GeneratePluginGoroutine(config, client, in)
+		memolist.GeneratePluginGoroutine(config, imemolist.Memo{}, generateSender(client), in)
 	},
+}
+
+func generateSender(client *slack.Client) func(string, string) {
+	return func(text string, channel string) { client.SendMessage(text, channel) }
 }
 
 // GeneratePluginProcessArgs is arguments of GeneratePluginProcess function
