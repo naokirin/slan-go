@@ -3,7 +3,7 @@ package memolist
 import "github.com/jinzhu/gorm"
 
 func connectDb() *gorm.DB {
-	db, err := gorm.Open("sqlite3", "memolist.db")
+	db, err := gorm.Open("sqlite3", "db/memolist.db")
 	if err != nil {
 		panic("failed to connect database: memolist.db")
 	}
