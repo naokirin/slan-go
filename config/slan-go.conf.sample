@@ -2,5 +2,7 @@ mention_name: "slan"
 slack_token: <slack bot token>
 plugins:
   - plugin: memolist
-    channel: "*"
-    user: "*"
+    channel:
+      - "*"
+    user:
+      - "*"

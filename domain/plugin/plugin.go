@@ -16,8 +16,11 @@ func (c *Config) CheckEnabledAdminUser(msg slack.Message) bool {
 	if !ok {
 		return true
 	}
-	admin := v.(string)
-	return admin == "*" || admin == msg.User
+	for _, admin := range v.([]interface{}) {
+		a := admin.(string)
+		return a == "*" || a == msg.User
+	}
+	return false
 }
 
 // CheckEnabledMessage checks message enabled
@@ -26,19 +29,29 @@ func (c *Config) CheckEnabledMessage(msg slack.Message) bool {
 }
 
 func (c *Config) checkEnabledChannel(msg slack.Message) bool {
-	v, ok := c.Data["channel"]
+	v, ok := c.Data["channels"]
 	if !ok {
 		return true
 	}
-	channel := v.(string)
-	return channel == "*" || channel == msg.Channel
+	for _, channel := range v.([]interface{}) {
+		c := channel.(string)
+		if c == "*" || c == msg.Channel {
+			return true
+		}
+	}
+	return false
 }
 
 func (c *Config) checkEnabledUser(msg slack.Message) bool {
-	v, ok := c.Data["user"]
+	v, ok := c.Data["users"]
 	if !ok {
 		return true
 	}
-	user := v.(string)
-	return user == "*" || user == msg.User
+	for _, user := range v.([]interface{}) {
+		u := user.(string)
+		if u == "*" || u == msg.User {
+			return true
+		}
+	}
+	return false
 }
