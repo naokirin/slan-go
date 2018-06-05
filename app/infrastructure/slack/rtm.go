@@ -1,7 +1,7 @@
 package slack
 
 import (
-	s "github.com/naokirin/slan-go/domain/slack"
+	s "github.com/naokirin/slan-go/app/domain/slack"
 	sl "github.com/nlopes/slack"
 )
 

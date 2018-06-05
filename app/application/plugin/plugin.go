@@ -3,12 +3,12 @@ package plugin
 import (
 	"fmt"
 
-	"github.com/naokirin/slan-go/domain/memolist"
-	"github.com/naokirin/slan-go/domain/ping"
-	"github.com/naokirin/slan-go/domain/plugin"
-	dslack "github.com/naokirin/slan-go/domain/slack"
-	"github.com/naokirin/slan-go/infrastructure/slack"
-	imemolist "github.com/naokirin/slan-go/infrastructure/sqlite/memolist"
+	"github.com/naokirin/slan-go/app/domain/memolist"
+	"github.com/naokirin/slan-go/app/domain/ping"
+	"github.com/naokirin/slan-go/app/domain/plugin"
+	dslack "github.com/naokirin/slan-go/app/domain/slack"
+	"github.com/naokirin/slan-go/app/infrastructure/slack"
+	imemolist "github.com/naokirin/slan-go/app/infrastructure/sqlite/memolist"
 )
 
 var plugins = map[string]func(plugin.Config, *slack.Client, chan dslack.Message){

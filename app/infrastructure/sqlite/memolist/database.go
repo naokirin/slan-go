@@ -4,7 +4,7 @@ import (
 	"github.com/jinzhu/gorm"
 	// import sqlite
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	domain "github.com/naokirin/slan-go/domain/memolist"
+	domain "github.com/naokirin/slan-go/app/domain/memolist"
 )
 
 // Memo data

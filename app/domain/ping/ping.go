@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/naokirin/slan-go/domain/plugin"
-	"github.com/naokirin/slan-go/domain/slack"
+	"github.com/naokirin/slan-go/app/domain/plugin"
+	"github.com/naokirin/slan-go/app/domain/slack"
 )
 
 var defaultResponses = []string{"pong"}

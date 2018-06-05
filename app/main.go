@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/naokirin/slan-go/application/plugin"
-	"github.com/naokirin/slan-go/infrastructure/slack"
-	"github.com/naokirin/slan-go/infrastructure/yaml"
+	"github.com/naokirin/slan-go/app/application/plugin"
+	"github.com/naokirin/slan-go/app/infrastructure/slack"
+	"github.com/naokirin/slan-go/app/infrastructure/yaml"
 )
 
 func main() {

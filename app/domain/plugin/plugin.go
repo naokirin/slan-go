@@ -1,7 +1,7 @@
 package plugin
 
 import (
-	"github.com/naokirin/slan-go/domain/slack"
+	"github.com/naokirin/slan-go/app/domain/slack"
 )
 
 // Config is plugin config for initialization
