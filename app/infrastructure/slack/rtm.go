@@ -32,12 +32,22 @@ func (client Client) GenerateReceivedEventChannel() chan s.Message {
 		for msg := range client.rtm.IncomingEvents {
 			switch ev := msg.Data.(type) {
 			case *sl.MessageEvent:
-				var message s.Message
-				message.Type = ev.Type
-				message.User = ev.User
-				message.Text = ev.Text
-				message.TimeStamp = ev.Timestamp
-				message.Channel = ev.Channel
+				botUser := client.rtm.GetInfo().User
+				channel, err := client.rtm.GetChannelInfo(ev.Channel)
+				channelName := ev.Username
+				if err == nil {
+					channelName = channel.Name
+				}
+				message := s.Message{
+					Type:        ev.Type,
+					BotName:     botUser.Name,
+					User:        ev.User,
+					UserName:    ev.Username,
+					Text:        ev.Text,
+					TimeStamp:   ev.Timestamp,
+					Channel:     ev.Channel,
+					ChannelName: channelName,
+				}
 				out <- message
 			default:
 			}

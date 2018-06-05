@@ -4,6 +4,16 @@ import (
 	"github.com/naokirin/slan-go/app/domain/slack"
 )
 
+// Plugin is interface of received message plugin
+type Plugin interface {
+	ReceiveMessage(msg slack.Message)
+}
+
+// Generator is interface of generate plugin
+type Generator interface {
+	Generate(Config, slack.Client) Plugin
+}
+
 // Config is plugin config for initialization
 type Config struct {
 	MentionName string

@@ -9,41 +9,44 @@ import (
 	"github.com/naokirin/slan-go/app/domain/slack"
 )
 
+var _ plugin.Plugin = (*Plugin)(nil)
+var _ plugin.Generator = (*Generator)(nil)
+
 var defaultResponses = []string{"pong"}
 
 // Plugin is ping plugin implementation
 type Plugin struct {
-	MentionName string
-	SendMessage func(string, string)
-	Responses   []string
+	mentionName string
+	client      slack.Client
+	responses   []string
+	config      plugin.Config
 }
 
-// GeneratePluginGoroutine generate memolist process
-func GeneratePluginGoroutine(config plugin.Config, sendMessage func(string, string), in chan slack.Message) {
-	plugin := &Plugin{
-		MentionName: config.MentionName,
-		SendMessage: sendMessage,
-		Responses:   responses(config),
-	}
+// Generator is ping plugin generator
+type Generator struct{}
 
-	go func() {
-		for msg := range in {
-			if config.CheckEnabledMessage(msg) {
-				plugin.ReceiveMessage(msg)
-			}
-		}
-	}()
+// Generate generate memolist process
+func (g *Generator) Generate(config plugin.Config, client slack.Client) plugin.Plugin {
+	return &Plugin{
+		mentionName: config.MentionName,
+		client:      client,
+		responses:   responses(config),
+		config:      config,
+	}
 }
 
 // ReceiveMessage processes memolist plugin for a received message
 func (p *Plugin) ReceiveMessage(msg slack.Message) {
+	if !p.config.CheckEnabledMessage(msg) {
+		return
+	}
 	if p.checkMessage(msg.Text) {
-		p.SendMessage(p.selectResponse(), msg.Channel)
+		p.client.SendMessage(p.selectResponse(), msg.Channel)
 	}
 }
 
 func (p *Plugin) checkMessage(text string) bool {
-	return strings.HasPrefix(text, "@"+p.MentionName+" ping")
+	return strings.HasPrefix(text, "@"+p.mentionName+" ping")
 }
 
 func responses(config plugin.Config) []string {
@@ -65,6 +68,6 @@ func responses(config plugin.Config) []string {
 func (p *Plugin) selectResponse() string {
 
 	rand.Seed(time.Now().UnixNano())
-	n := rand.Intn(len(p.Responses))
-	return p.Responses[n]
+	n := rand.Intn(len(p.responses))
+	return p.responses[n]
 }
