@@ -12,6 +12,8 @@ import (
 var _ plugin.Plugin = (*Plugin)(nil)
 var _ plugin.Generator = (*Generator)(nil)
 
+const defaultSubcommand = "ping"
+
 var defaultResponses = []string{"pong"}
 
 // Plugin is ping plugin implementation
@@ -46,7 +48,7 @@ func (p *Plugin) ReceiveMessage(msg slack.Message) {
 }
 
 func (p *Plugin) checkMessage(text string) bool {
-	return strings.HasPrefix(text, "@"+p.mentionName+" ping")
+	return strings.HasPrefix(text, "@"+p.mentionName+" "+p.config.GetSubcommand(defaultSubcommand))
 }
 
 func responses(config plugin.Config) []string {

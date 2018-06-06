@@ -20,6 +20,15 @@ type Config struct {
 	Data        map[interface{}]interface{}
 }
 
+// GetSubcommand returns subcommand name
+func (c *Config) GetSubcommand(defaultName string) string {
+	v, ok := c.Data["subcommand"]
+	if !ok {
+		return defaultName
+	}
+	return v.(string)
+}
+
 // CheckEnabledAdminUser checks message for admin user
 func (c *Config) CheckEnabledAdminUser(msg slack.Message) bool {
 	v, ok := c.Data["admin"]
