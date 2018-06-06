@@ -11,7 +11,7 @@ import (
 )
 
 var pluginGenerators = map[string]dplugin.Generator{
-	"memolist": &memolist.Generator{Repository: imemolist.Memo{}},
+	"memolist": &memolist.Generator{Repository: &imemolist.Memo{}},
 	"ping":     &ping.Generator{},
 }
 

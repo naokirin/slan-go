@@ -4,12 +4,13 @@ package memolist
 type Memo interface {
 	GetUser() string
 	GetText() string
+	GetKind() string
 }
 
 // Repository is memolist repository interface
 type Repository interface {
-	All(user string) []Memo
-	DeleteAll(user string)
-	Add(user string, text string)
-	Delete(user string, m Memo) bool
+	All(kind string, user string) []Memo
+	DeleteAll(kind string, user string)
+	Add(kind string, user string, text string)
+	Delete(m Memo) bool
 }

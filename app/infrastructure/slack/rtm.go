@@ -38,11 +38,16 @@ func (client Client) GenerateReceivedEventChannel() chan s.Message {
 				if err == nil {
 					channelName = channel.Name
 				}
+				user, err := client.rtm.GetUserInfo(ev.User)
+				userName := ev.Username
+				if err == nil {
+					userName = user.Profile.DisplayName
+				}
 				message := s.Message{
 					Type:        ev.Type,
 					BotName:     botUser.Name,
 					User:        ev.User,
-					UserName:    ev.Username,
+					UserName:    userName,
 					Text:        ev.Text,
 					TimeStamp:   ev.Timestamp,
 					Channel:     ev.Channel,

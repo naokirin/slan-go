@@ -16,6 +16,7 @@ type Plugin struct {
 	mentionName string
 	client      slack.Client
 	repository  Repository
+	kind        string
 	config      plugin.Config
 }
 
@@ -26,9 +27,15 @@ type Generator struct {
 
 // Generate generate memolist process
 func (g *Generator) Generate(config plugin.Config, client slack.Client) plugin.Plugin {
+	k, ok := config.Data["kind"]
+	kind := ""
+	if ok {
+		kind = k.(string)
+	}
 	return &Plugin{
 		mentionName: config.MentionName,
 		client:      client,
+		kind:        kind,
 		repository:  g.Repository,
 		config:      config,
 	}
@@ -54,7 +61,7 @@ func (p *Plugin) checkMessage(text string, subcommand string) bool {
 
 func (p *Plugin) showList(msg slack.Message) {
 	result := ""
-	memolist := p.repository.All(msg.User)
+	memolist := p.repository.All(p.kind, msg.User)
 	for i, memo := range memolist {
 		result = result + strconv.Itoa(i+1) + ". " + memo.GetText() + "\n"
 		i++
@@ -70,7 +77,7 @@ func (p *Plugin) addMemo(msg slack.Message) {
 	if len(content) >= 3 {
 		contents := strings.Split(content[2], "\n")
 		for _, c := range contents {
-			p.repository.Add(msg.User, c)
+			p.repository.Add(p.kind, msg.User, c)
 		}
 		p.client.SendMessage("メモに追加しました", msg.Channel)
 	} else {
@@ -79,7 +86,7 @@ func (p *Plugin) addMemo(msg slack.Message) {
 }
 
 func (p *Plugin) deleteMemo(msg slack.Message) {
-	all := p.repository.All(msg.User)
+	all := p.repository.All(p.kind, msg.User)
 	if len(all) <= 0 {
 		p.client.SendMessage("登録されたメモがありません", msg.Channel)
 	}
@@ -91,7 +98,7 @@ func (p *Plugin) deleteMemo(msg slack.Message) {
 	content := strings.SplitN(msg.Text, " ", 3)
 	if len(content) >= 3 {
 		if content[2] == "all" {
-			p.repository.DeleteAll(msg.User)
+			p.repository.DeleteAll(p.kind, msg.User)
 			p.client.SendMessage("メモを削除しました", msg.Channel)
 			return
 		}
@@ -104,7 +111,7 @@ func (p *Plugin) deleteMemo(msg slack.Message) {
 			} else {
 				v, ok := memos[int(index-1)]
 				if ok {
-					p.repository.Delete(msg.User, v)
+					p.repository.Delete(v)
 					result = true
 				} else {
 					p.client.SendMessage("メモ("+i+")を削除できませんでした", msg.Channel)
