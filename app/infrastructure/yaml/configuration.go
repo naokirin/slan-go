@@ -5,10 +5,11 @@ import (
 )
 
 type repository struct {
-	mentionName string
-	slackToken  string
-	location    string
-	plugins     []interface{}
+	mentionName      string
+	defaultResponses []string
+	slackToken       string
+	location         string
+	plugins          []interface{}
 }
 
 // ConfigurationRepository is configuration data
@@ -28,11 +29,19 @@ func GetConfigurationRepository() ConfigurationRepository {
 		if err != nil {
 			return
 		}
+		dr, ok := data["default_responses"]
+		defaultResponses := make([]string, 0)
+		if ok {
+			for _, d := range dr.([]interface{}) {
+				defaultResponses = append(defaultResponses, d.(string))
+			}
+		}
 		instance = &repository{
-			mentionName: data["mention_name"].(string),
-			slackToken:  data["slack_token"].(string),
-			plugins:     data["plugins"].([]interface{}),
-			location:    data["location"].(string),
+			mentionName:      data["mention_name"].(string),
+			defaultResponses: defaultResponses,
+			slackToken:       data["slack_token"].(string),
+			plugins:          data["plugins"].([]interface{}),
+			location:         data["location"].(string),
 		}
 	})
 	return ConfigurationRepository{*instance}
@@ -41,6 +50,11 @@ func GetConfigurationRepository() ConfigurationRepository {
 // GetMentionName returns the mention name
 func (r *ConfigurationRepository) GetMentionName() string {
 	return r.mentionName
+}
+
+// GetDefaultResponses returns default responses
+func (r *ConfigurationRepository) GetDefaultResponses() []string {
+	return r.defaultResponses
 }
 
 // GetSlackToken returns slack token from configuration

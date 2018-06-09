@@ -21,15 +21,17 @@ type Plugin struct {
 }
 
 // ReceiveMessage run received message
-func (p *Plugin) ReceiveMessage(msg slack.Message) {
+func (p *Plugin) ReceiveMessage(msg slack.Message) bool {
 	if p.config.CheckEnabledMessage(msg) {
 		prefix := fmt.Sprintf("@%s %s", p.config.MentionName, p.config.GetSubcommand("calendar"))
 		if strings.HasPrefix(msg.Text, prefix) {
 			go func(m slack.Message) {
 				p.sendMessage(msg.Channel)
 			}(msg)
+			return true
 		}
 	}
+	return false
 }
 
 func (p *Plugin) sendMessage(channel string) {

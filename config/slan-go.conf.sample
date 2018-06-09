@@ -1,5 +1,8 @@
 mention_name: "slan"
 slack_token: <slack bot token>
+default_responses:
+  - "default response1"
+  - "default response2"
 plugins:
   - plugin: memolist
     channels:

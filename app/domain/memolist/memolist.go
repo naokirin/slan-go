@@ -43,18 +43,24 @@ func (g *Generator) Generate(config plugin.Config, client slack.Client) plugin.P
 }
 
 // ReceiveMessage processes memolist plugin for a received message
-func (p *Plugin) ReceiveMessage(msg slack.Message) {
+func (p *Plugin) ReceiveMessage(msg slack.Message) bool {
 	if !p.config.CheckEnabledMessage(msg) {
-		return
+		return false
 	}
 	command := p.config.GetSubcommand("memo")
 	if p.checkMessage(msg.Text, command, "list") {
 		p.showList(msg)
-	} else if p.checkMessage(msg.Text, command, "add") {
-		p.addMemo(msg)
-	} else if p.checkMessage(msg.Text, command, "delete") {
-		p.deleteMemo(msg)
+		return true
 	}
+	if p.checkMessage(msg.Text, command, "add") {
+		p.addMemo(msg)
+		return true
+	}
+	if p.checkMessage(msg.Text, command, "delete") {
+		p.deleteMemo(msg)
+		return true
+	}
+	return false
 }
 
 func (p *Plugin) checkMessage(text string, command string, subcommand string) bool {

@@ -2,6 +2,8 @@ package main
 
 import (
 	"log"
+	"math/rand"
+	"strings"
 	"time"
 
 	"github.com/naokirin/slan-go/app/application/plugin"
@@ -39,9 +41,17 @@ func main() {
 		PluginConfigs:    pluginConfigs,
 		PluginGenerators: pluginGenerators,
 	})
+	rand.Seed(time.Now().UnixNano())
+	defaultResponses := config.GetDefaultResponses()
+	defaultResponsesLen := len(defaultResponses)
 	for msg := range client.GenerateReceivedEventChannel() {
+		match := false
 		for _, p := range plugins {
-			p.ReceiveMessage(msg)
+			match = p.ReceiveMessage(msg) || match
+		}
+		if !match && strings.HasPrefix(msg.Text, "@"+config.GetMentionName()) && defaultResponsesLen > 0 {
+			n := rand.Intn(defaultResponsesLen)
+			client.SendMessage(defaultResponses[n], msg.Channel)
 		}
 	}
 }

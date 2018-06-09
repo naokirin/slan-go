@@ -6,7 +6,7 @@ import (
 
 // Plugin is interface of received message plugin
 type Plugin interface {
-	ReceiveMessage(msg slack.Message)
+	ReceiveMessage(msg slack.Message) bool
 }
 
 // Generator is interface of generate plugin
