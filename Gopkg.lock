@@ -8,6 +8,12 @@
   version = "v0.23.0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/divan/num2words"
+  packages = ["."]
+  revision = "57dba452f9421c72bc7fa8e44e4596419bde0355"
+
+[[projects]]
   name = "github.com/golang/protobuf"
   packages = ["proto"]
   revision = "b4deda0973fb4c70b50d226b1af49f3da59f5265"
@@ -80,7 +86,8 @@
     "calendar/v3",
     "gensupport",
     "googleapi",
-    "googleapi/internal/uritemplates"
+    "googleapi/internal/uritemplates",
+    "sheets/v4"
   ]
   revision = "8e9de5a6de6d356eb08ebb58f6daab313283c6b0"
 
@@ -110,6 +117,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "0c6b2b035bf59e0b9707b45e93f7a5db89b4cc935d102b38269fca68e0f04c50"
+  inputs-digest = "0601f9a23cd0cbe17aeb6e6615755b8d03be3542ac4c6ad4de85e6197c7b4405"
   solver-name = "gps-cdcl"
   solver-version = 1

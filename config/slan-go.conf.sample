@@ -29,3 +29,12 @@ plugins:
       channel: "random"
       cron:
         - "0 50 9 * * 1-5"
+    - plugin: lunch
+      channels:
+        - "random"
+      token_file: "secrets/token.json"
+      secret_file: "secrets/client_secret.json"
+      sheet_id: <sheet_id>
+      ranges:
+        - "A2:A"
+        - "B2:B"

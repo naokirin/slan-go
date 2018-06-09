@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 
-	g "github.com/naokirin/slan-go/cmd/google"
+	g "github.com/naokirin/slan-go/cmd/google/internal"
 	"golang.org/x/oauth2/google"
 	calendar "google.golang.org/api/calendar/v3"
 )
