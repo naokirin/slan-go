@@ -14,3 +14,15 @@ plugins:
     responses:
       - pong
       - gnop
+  - plugin: calendar
+    subcommand: "calendar"
+    channels:
+      - "random"
+    token_file: "secrets/token.json"
+    secret_file: "secrets/client_secret.json"
+    exclude:
+      - "Foo"
+    schedule:
+      channel: "random"
+      cron:
+        - "0 50 9 * * 1-5"

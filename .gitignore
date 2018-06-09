@@ -19,3 +19,6 @@ config/slan-go.conf
 
 # sqlite db files
 db/
+
+# secret files
+secrets/

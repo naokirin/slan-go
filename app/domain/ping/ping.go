@@ -1,6 +1,7 @@
 package ping
 
 import (
+	"fmt"
 	"math/rand"
 	"strings"
 	"time"
@@ -48,7 +49,8 @@ func (p *Plugin) ReceiveMessage(msg slack.Message) {
 }
 
 func (p *Plugin) checkMessage(text string) bool {
-	return strings.HasPrefix(text, "@"+p.mentionName+" "+p.config.GetSubcommand(defaultSubcommand))
+	subcommand := p.config.GetSubcommand(defaultSubcommand)
+	return strings.HasPrefix(text, fmt.Sprintf("@%s %s", p.mentionName, subcommand))
 }
 
 func responses(config plugin.Config) []string {

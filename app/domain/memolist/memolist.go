@@ -1,6 +1,7 @@
 package memolist
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -46,17 +47,18 @@ func (p *Plugin) ReceiveMessage(msg slack.Message) {
 	if !p.config.CheckEnabledMessage(msg) {
 		return
 	}
-	if p.checkMessage(msg.Text, "list") {
+	command := p.config.GetSubcommand("memo")
+	if p.checkMessage(msg.Text, command, "list") {
 		p.showList(msg)
-	} else if p.checkMessage(msg.Text, "add") {
+	} else if p.checkMessage(msg.Text, command, "add") {
 		p.addMemo(msg)
-	} else if p.checkMessage(msg.Text, "delete") {
+	} else if p.checkMessage(msg.Text, command, "delete") {
 		p.deleteMemo(msg)
 	}
 }
 
-func (p *Plugin) checkMessage(text string, subcommand string) bool {
-	return strings.HasPrefix(text, "@"+p.mentionName+" memo."+subcommand)
+func (p *Plugin) checkMessage(text string, command string, subcommand string) bool {
+	return strings.HasPrefix(text, fmt.Sprintf("@%s %s.%s", p.mentionName, command, subcommand))
 }
 
 func (p *Plugin) showList(msg slack.Message) {
@@ -67,7 +69,7 @@ func (p *Plugin) showList(msg slack.Message) {
 		i++
 	}
 	if result == "" {
-		result = "登録されたメモはありません"
+		result = "メモはありません!!"
 	}
 	p.client.SendMessage(result, msg.Channel)
 }
@@ -79,16 +81,16 @@ func (p *Plugin) addMemo(msg slack.Message) {
 		for _, c := range contents {
 			p.repository.Add(p.kind, msg.User, c)
 		}
-		p.client.SendMessage("メモに追加しました", msg.Channel)
+		p.client.SendMessage("メモしました!", msg.Channel)
 	} else {
-		p.client.SendMessage("メモに追加できませんでした", msg.Channel)
+		p.client.SendMessage("メモできませんでした...", msg.Channel)
 	}
 }
 
 func (p *Plugin) deleteMemo(msg slack.Message) {
 	all := p.repository.All(p.kind, msg.User)
 	if len(all) <= 0 {
-		p.client.SendMessage("登録されたメモがありません", msg.Channel)
+		p.client.SendMessage("メモはないです!", msg.Channel)
 	}
 	memos := map[int]Memo{}
 	for i, m := range all {

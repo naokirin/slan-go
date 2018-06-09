@@ -7,6 +7,7 @@ import (
 type repository struct {
 	mentionName string
 	slackToken  string
+	location    string
 	plugins     []interface{}
 }
 
@@ -31,6 +32,7 @@ func GetConfigurationRepository() ConfigurationRepository {
 			mentionName: data["mention_name"].(string),
 			slackToken:  data["slack_token"].(string),
 			plugins:     data["plugins"].([]interface{}),
+			location:    data["location"].(string),
 		}
 	})
 	return ConfigurationRepository{*instance}
@@ -44,6 +46,11 @@ func (r *ConfigurationRepository) GetMentionName() string {
 // GetSlackToken returns slack token from configuration
 func (r *ConfigurationRepository) GetSlackToken() string {
 	return r.slackToken
+}
+
+// GetLocation returns location name for scheduler
+func (r *ConfigurationRepository) GetLocation() string {
+	return r.location
 }
 
 // GetPlugins returns plugin configurations

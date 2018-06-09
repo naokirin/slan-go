@@ -4,5 +4,6 @@ package repository
 type Repository interface {
 	GetMentionName() string
 	GetSlackToken() string
+	GetLocation() string
 	GetPlugins() map[string]interface{}
 }
