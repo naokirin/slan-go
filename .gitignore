@@ -16,6 +16,7 @@ vendor/
 
 # configuration file
 config/slan-go.conf
+config/emoji_list.conf
 
 # sqlite db files
 db/

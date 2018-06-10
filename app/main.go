@@ -13,11 +13,13 @@ import (
 	"github.com/naokirin/slan-go/app/domain/memolist"
 	"github.com/naokirin/slan-go/app/domain/ping"
 	dplugin "github.com/naokirin/slan-go/app/domain/plugin"
+	"github.com/naokirin/slan-go/app/domain/stampgacha"
 	icalendar "github.com/naokirin/slan-go/app/infrastructure/google/calendar"
 	"github.com/naokirin/slan-go/app/infrastructure/google/spreadsheets"
 	ilgtmize "github.com/naokirin/slan-go/app/infrastructure/lgtmize"
 	"github.com/naokirin/slan-go/app/infrastructure/slack"
 	imemolist "github.com/naokirin/slan-go/app/infrastructure/sqlite/memolist"
+	istampgacha "github.com/naokirin/slan-go/app/infrastructure/sqlite/stampgacha"
 	"github.com/naokirin/slan-go/app/infrastructure/yaml"
 )
 
@@ -27,6 +29,10 @@ var pluginGenerators = map[string]dplugin.Generator{
 	"calendar": &calendar.Generator{Calendar: &icalendar.Calendar{}},
 	"lunch":    &lunch.Generator{Repository: &spreadsheets.Spreadsheets{}},
 	"lgtmize":  &lgtmize.Generator{LGTMize: &ilgtmize.LGTMize{}},
+	"stamp_gacha": &stampgacha.Generator{
+		Repository:       &istampgacha.StampGacha{},
+		ConfigRepository: &yaml.EmojiListRepository{},
+	},
 }
 
 func main() {

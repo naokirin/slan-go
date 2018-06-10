@@ -20,5 +20,6 @@ type Client interface {
 	UploadFile(title string, path string, channel string) (string, error)
 	GenerateReceivedEventChannel() chan Message
 	GetBotName() string
+	GetEmoji() map[string]string
 	ConvertChannelNameToID(name string) (string, bool)
 }

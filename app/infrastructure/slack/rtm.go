@@ -1,6 +1,7 @@
 package slack
 
 import (
+	"log"
 	"os"
 
 	s "github.com/naokirin/slan-go/app/domain/slack"
@@ -122,6 +123,16 @@ func (client Client) GetBotName() string {
 		return info.User.Name
 	}
 	return user.RealName
+}
+
+// GetEmoji returns all emoji
+func (client Client) GetEmoji() map[string]string {
+	result, err := client.api.GetEmoji()
+	if err != nil {
+		log.Printf("%v", err)
+		return make(map[string]string)
+	}
+	return result
 }
 
 // ConvertChannelNameToID returns corresponding channel id
