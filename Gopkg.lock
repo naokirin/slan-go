@@ -8,6 +8,12 @@
   version = "v0.23.0"
 
 [[projects]]
+  name = "github.com/disintegration/imaging"
+  packages = ["."]
+  revision = "bbcee2f5c9d5e94ca42c8b50ec847fec64a6c134"
+  version = "v1.4.2"
+
+[[projects]]
   branch = "master"
   name = "github.com/divan/num2words"
   packages = ["."]
@@ -47,16 +53,26 @@
   version = "v1.7.0"
 
 [[projects]]
+  branch = "master"
   name = "github.com/nlopes/slack"
   packages = ["."]
-  revision = "8ab4d0b364ef1e9af5d102531da20d5ec902b6c4"
-  version = "v0.2.0"
+  revision = "5fd1f5d20fd04d67edb607282fb79bb653eb3262"
 
 [[projects]]
   name = "github.com/robfig/cron"
   packages = ["."]
   revision = "b41be1df696709bb6395fe435af20370037c0b4c"
   version = "v1.1"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/image"
+  packages = [
+    "bmp",
+    "tiff",
+    "tiff/lzw"
+  ]
+  revision = "af66defab954cb421ca110193eed9477c8541e2a"
 
 [[projects]]
   branch = "master"
@@ -117,6 +133,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "0601f9a23cd0cbe17aeb6e6615755b8d03be3542ac4c6ad4de85e6197c7b4405"
+  inputs-digest = "dc0e6cdd6736f6dcfc76e279f3a5549d16a8513fdefad9313d994635fbc1abfd"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -17,6 +17,7 @@ type Attachment struct {
 type Client interface {
 	SendMessage(msg string, channel string)
 	SendAttachment(name string, attachment Attachment, channel string)
+	UploadFile(title string, path string, channel string) (string, error)
 	GenerateReceivedEventChannel() chan Message
 	GetBotName() string
 	ConvertChannelNameToID(name string) (string, bool)

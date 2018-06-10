@@ -1,6 +1,8 @@
 package slack
 
 import (
+	"os"
+
 	s "github.com/naokirin/slan-go/app/domain/slack"
 	sl "github.com/nlopes/slack"
 )
@@ -41,6 +43,27 @@ func (client Client) SendAttachment(name string, attachment s.Attachment, channe
 	}
 
 	client.api.PostMessage(channel, "", params)
+}
+
+// UploadFile upload file to slack
+func (client Client) UploadFile(title string, path string, channel string) (string, error) {
+	reader, err := os.Open(path)
+	defer reader.Close()
+	if err != nil {
+		return "", err
+	}
+	params := sl.FileUploadParameters{
+		Title:          title,
+		InitialComment: "",
+		Filename:       path,
+		Reader:         reader,
+		Channels:       []string{channel},
+	}
+	file, err := client.api.UploadFile(params)
+	if err != nil {
+		return "", err
+	}
+	return file.URL, err
 }
 
 // CreateClient create slack client for RTM
