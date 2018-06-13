@@ -1,0 +1,9 @@
+version: '3.2'
+
+services:
+  slan-go:
+    build: .
+    image: slan-go
+    volumes:
+      - ./db:/go/src/github.com/naokirin/slan-go/db
+      - ./secrets:/go/src/github.com/naokirin/slan-go/secrets
