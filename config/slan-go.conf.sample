@@ -1,5 +1,7 @@
 mention_name: "slan"
 slack_token: <slack bot token>
+Location: "Asia/Tokyo"
+Language: "jpn"
 default_responses:
   - "default response1"
   - "default response2"

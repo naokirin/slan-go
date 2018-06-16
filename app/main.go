@@ -50,6 +50,7 @@ func main() {
 	plugins := plugin.GeneratePlugins(plugin.GeneratePluginProcessArgs{
 		Client:           client,
 		MentionName:      config.GetMentionName(),
+		Language: config.GetLanguage(),
 		PluginConfigs:    pluginConfigs,
 		PluginGenerators: pluginGenerators,
 	})

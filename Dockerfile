@@ -15,8 +15,6 @@ ADD ./app /go/src/github.com/naokirin/slan-go/app
 RUN go build -o slan-go app/main.go
 
 ADD ./img /go/src/github.com/naokirin/slan-go/img
-ADD ./secrets /go/src/github.com/naokirin/slan-go/secrets
-ADD ./config /go/src/github.com/naokirin/slan-go/config
 
 CMD ["./slan-go"]
 

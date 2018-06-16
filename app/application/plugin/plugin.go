@@ -1,7 +1,11 @@
 package plugin
 
 import (
+	"fmt"
 	"log"
+
+	"github.com/naokirin/slan-go/app/domain/response"
+	"github.com/naokirin/slan-go/app/infrastructure/yaml"
 
 	"github.com/naokirin/slan-go/app/domain/plugin"
 	"github.com/naokirin/slan-go/app/infrastructure/slack"
@@ -11,6 +15,7 @@ import (
 type GeneratePluginProcessArgs struct {
 	Client           *slack.Client
 	MentionName      string
+	Language         string
 	PluginConfigs    []interface{}
 	PluginGenerators map[string]plugin.Generator
 }
@@ -30,9 +35,26 @@ func GeneratePlugins(args GeneratePluginProcessArgs) []plugin.Plugin {
 			continue
 		}
 		pluginConfig := plugin.Config{
-			MentionName: args.MentionName,
-			Data:        v.(map[interface{}]interface{}),
+			MentionName:       args.MentionName,
+			ResponseTemplates: &response.Template{},
+			Data:              v.(map[interface{}]interface{}),
 		}
+		m, err := yaml.ParseFromFile(fmt.Sprintf("responses/%s/%s.yaml", args.Language, pluginName))
+		if err != nil {
+			log.Panicf("error: %v", err)
+		}
+		responses := make(map[string]string)
+		responseTemplate, ok := pluginConfig.Data["response_template"]
+		if ok {
+			m, err = yaml.ParseFromFile(fmt.Sprintf("responses/%s.yaml", responseTemplate.(string)))
+			if err != nil {
+				log.Panicf("error: %v", err)
+			}
+		}
+		for k, v := range m {
+			responses[k.(string)] = v.(string)
+		}
+		pluginConfig.ResponseTemplates.AddTemplates(responses)
 		result = append(result, pg.Generate(pluginConfig, args.Client))
 	}
 	return result

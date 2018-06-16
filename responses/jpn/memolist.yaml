@@ -1,0 +1,7 @@
+not_found_memo: "メモはありませんでした"
+add_memo: "メモしました"
+could_not_add_memo: "メモできませんでした"
+not_found_memo_when_delete: "まだメモはありません"
+delete_memo: "メモを削除しました"
+could_not_delete_memo: "メモを削除できませんでした"
+could_not_delete_specified_memo: "メモ({{.Number}})を削除できませんでした"

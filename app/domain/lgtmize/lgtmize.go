@@ -51,11 +51,13 @@ func (p *Plugin) ReceiveMessage(msg slack.Message) bool {
 	if p.checkMessage(msg.Text) {
 		ss := strings.SplitN(msg.Text, " ", 5)
 		if len(ss) < 3 {
-			p.client.SendMessage("わかりません!!", msg.Channel)
+			message := p.config.ResponseTemplates.GetText("error_message_for_generate_image", nil)
+			p.client.SendMessage(message, msg.Channel)
 			return true
 		}
 		if len(ss[2]) < 3 {
-			p.client.SendMessage("わかりません!!", msg.Channel)
+			message := p.config.ResponseTemplates.GetText("error_message_for_generate_image", nil)
+			p.client.SendMessage(message, msg.Channel)
 			return true
 		}
 
@@ -74,13 +76,15 @@ func (p *Plugin) ReceiveMessage(msg slack.Message) bool {
 		go func(url string, color string, channel string) {
 			path, err := p.lgtmize.CreateLGTM(url, size, color)
 			if err != nil {
-				p.client.SendMessage("わかりません!!", channel)
+				message := p.config.ResponseTemplates.GetText("error_message_for_generate_image", nil)
+				p.client.SendMessage(message, channel)
 				return
 			}
 			defer os.Remove(path)
 			imageURL, err := p.client.UploadFile("LGTM", path, channel)
 			if err != nil {
-				p.client.SendMessage("あっぷろーどできません!!", channel)
+				message := p.config.ResponseTemplates.GetText("error_message_for_upload", nil)
+				p.client.SendMessage(message, channel)
 				return
 			}
 			p.client.SendMessage(imageURL, channel)

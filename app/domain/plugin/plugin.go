@@ -1,6 +1,7 @@
 package plugin
 
 import (
+	"github.com/naokirin/slan-go/app/domain/response"
 	"github.com/naokirin/slan-go/app/domain/slack"
 )
 
@@ -16,8 +17,9 @@ type Generator interface {
 
 // Config is plugin config for initialization
 type Config struct {
-	MentionName string
-	Data        map[interface{}]interface{}
+	MentionName       string
+	ResponseTemplates response.TemplateInterface
+	Data              map[interface{}]interface{}
 }
 
 // GetSubcommand returns subcommand name

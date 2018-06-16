@@ -75,28 +75,32 @@ func (p *Plugin) showList(msg slack.Message) {
 		i++
 	}
 	if result == "" {
-		result = "メモはありません!!"
+		result = p.config.ResponseTemplates.GetText("not_found_memo", nil)
 	}
 	p.client.SendMessage(result, msg.Channel)
 }
 
 func (p *Plugin) addMemo(msg slack.Message) {
 	content := strings.SplitN(msg.Text, " ", 3)
+	message := ""
 	if len(content) >= 3 {
 		contents := strings.Split(content[2], "\n")
 		for _, c := range contents {
 			p.repository.Add(p.kind, msg.User, c)
 		}
-		p.client.SendMessage("メモしました!", msg.Channel)
+		message = p.config.ResponseTemplates.GetText("add_memo", nil)
 	} else {
-		p.client.SendMessage("メモできませんでした...", msg.Channel)
+		message = p.config.ResponseTemplates.GetText("could_not_add_memo", nil)
 	}
+	p.client.SendMessage(message, msg.Channel)
 }
 
 func (p *Plugin) deleteMemo(msg slack.Message) {
 	all := p.repository.All(p.kind, msg.User)
 	if len(all) <= 0 {
-		p.client.SendMessage("メモはないです!", msg.Channel)
+		message := p.config.ResponseTemplates.GetText("not_found_memo_when_delete", nil)
+		p.client.SendMessage(message, msg.Channel)
+		return
 	}
 	memos := map[int]Memo{}
 	for i, m := range all {
@@ -107,7 +111,8 @@ func (p *Plugin) deleteMemo(msg slack.Message) {
 	if len(content) >= 3 {
 		if content[2] == "all" {
 			p.repository.DeleteAll(p.kind, msg.User)
-			p.client.SendMessage("メモを削除しました", msg.Channel)
+			message := p.config.ResponseTemplates.GetText("delete_memo", nil)
+			p.client.SendMessage(message, msg.Channel)
 			return
 		}
 		result := false
@@ -115,21 +120,25 @@ func (p *Plugin) deleteMemo(msg slack.Message) {
 		for _, i := range indexes {
 			index, err := strconv.ParseInt(i, 10, 64)
 			if err != nil {
-				p.client.SendMessage("メモ("+i+")を削除できませんでした", msg.Channel)
+				message := p.config.ResponseTemplates.GetText("could_not_delete_specified_delete", map[string]string{"Number": i})
+				p.client.SendMessage(message, msg.Channel)
 			} else {
 				v, ok := memos[int(index-1)]
 				if ok {
 					p.repository.Delete(v)
 					result = true
 				} else {
-					p.client.SendMessage("メモ("+i+")を削除できませんでした", msg.Channel)
+					message := p.config.ResponseTemplates.GetText("could_not_delete_specified_delete", map[string]string{"Number": i})
+					p.client.SendMessage(message, msg.Channel)
 				}
 			}
 		}
 		if result {
-			p.client.SendMessage("メモを削除しました", msg.Channel)
+			message := p.config.ResponseTemplates.GetText("delete_memo", nil)
+			p.client.SendMessage(message, msg.Channel)
 			return
 		}
 	}
-	p.client.SendMessage("メモを削除できませんでした", msg.Channel)
+	message := p.config.ResponseTemplates.GetText("could_not_delete_memo", nil)
+	p.client.SendMessage(message, msg.Channel)
 }

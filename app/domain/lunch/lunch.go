@@ -56,13 +56,15 @@ func (p *Plugin) choiceLunches() string {
 	id, ok := p.config.Data["sheet_id"]
 	if !ok {
 		log.Printf("lunch plugin requires sheet_id setting.")
-		return "...みつからなかったです!!"
+		message := p.config.ResponseTemplates.GetText("not_found_lunch_sheet", nil)
+		return message
 	}
 
 	ranges, ok := p.config.Data["ranges"]
 	if !ok {
 		log.Printf("lunch plugin requires ranges setting.")
-		return "...みつからなかったです!!"
+		message := p.config.ResponseTemplates.GetText("not_found_lunch_range", nil)
+		return message
 	}
 
 	rs := make([][][]string, 0)
@@ -80,9 +82,12 @@ func (p *Plugin) choiceLunches() string {
 		result += fmt.Sprintf(":%s: %s\n", num2words.Convert(i+1), r[n][0])
 	}
 	if len(result) == 0 {
-		return "...みつからなかったです!!"
+		message := p.config.ResponseTemplates.GetText("not_found_lunch_range", nil)
+		return message
 	}
-	return "ランチ候補です!!\n" + result
+	m := map[string]string{"Result": result}
+	message := p.config.ResponseTemplates.GetText("show_lunch", m)
+	return message
 }
 
 func (p *Plugin) getTokenPath() string {

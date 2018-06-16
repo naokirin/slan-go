@@ -1,0 +1,3 @@
+not_found_stamps: "スタンプが見つかりませんでした"
+now_allowed_for_duration: "{{.Duration}}分に一度までです"
+show_stamp: "{{.Stamp}}"

@@ -1,0 +1,3 @@
+not_found_lunch_sheet: "シートが見つかりませんでした"
+not_found_lunch_range: "範囲が見つかりませんでした"
+show_lunch: "ランチ候補です\n{{.Result}}"

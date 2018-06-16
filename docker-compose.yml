@@ -5,5 +5,7 @@ services:
     build: .
     image: slan-go
     volumes:
+      - ./config:/go/src/github.com/naokirin/slan-go/config
       - ./db:/go/src/github.com/naokirin/slan-go/db
       - ./secrets:/go/src/github.com/naokirin/slan-go/secrets
+      - ./responses:/go/src/github.com/naokirin/slan-go/responses

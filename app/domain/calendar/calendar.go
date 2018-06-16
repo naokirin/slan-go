@@ -48,10 +48,12 @@ func (p *Plugin) sendMessage(channel string) {
 		fields = append(fields, field)
 	}
 	if len(fields) > 0 {
-		attachment := createAttachment("今日の予定です!", fields)
+		message := p.config.ResponseTemplates.GetText("show_schedule", nil)
+		attachment := createAttachment(message, fields)
 		p.client.SendAttachment(p.client.GetBotName(), attachment, channel)
 	} else {
-		p.client.SendMessage("今日の予定はないです...", channel)
+		message := p.config.ResponseTemplates.GetText("not_found_schedule", nil)
+		p.client.SendMessage(message, channel)
 	}
 }
 

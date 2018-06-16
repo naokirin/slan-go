@@ -82,19 +82,24 @@ func (p *Plugin) checkMessage(text string) bool {
 func (p *Plugin) draw(msg slack.Message) {
 	stampLen := len(p.stamps)
 	if stampLen == 0 {
-		p.client.SendMessage("けいひんがありません!!", msg.Channel)
+		message := p.config.ResponseTemplates.GetText("not_found_stamps", nil)
+		p.client.SendMessage(message, msg.Channel)
 		return
 	}
 	lastLottingTime, ok := p.repository.LastLottingTime(msg.User)
 	if ok {
 		diff := time.Since(lastLottingTime)
 		if diff < time.Minute*5 {
-			p.client.SendMessage("くじびきは5分に1回までです!!", msg.Channel)
+			m := map[string]string{"Duration": "5"}
+			message := p.config.ResponseTemplates.GetText("not_allowed_for_duration", m)
+			p.client.SendMessage(message, msg.Channel)
 			return
 		}
 	}
 	rand.Seed(time.Now().UnixNano())
 	n := rand.Intn(stampLen)
-	p.client.SendMessage("っ"+p.stamps[n], msg.Channel)
+	m := map[string]string{"Stamp": p.stamps[n]}
+	message := p.config.ResponseTemplates.GetText("show_stamp", m)
+	p.client.SendMessage(message, msg.Channel)
 	p.repository.SaveLottingTime(msg.User)
 }
