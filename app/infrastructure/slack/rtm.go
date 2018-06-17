@@ -21,25 +21,29 @@ func (client Client) SendMessage(msg string, channel string) {
 	client.rtm.SendMessage(client.rtm.NewOutgoingMessage(msg, channel))
 }
 
-// SendAttachment send attachment
-func (client Client) SendAttachment(name string, attachment s.Attachment, channel string) {
+// SendAttachments send attachment
+func (client Client) SendAttachments(name string, attachments []s.Attachment, channel string) {
 
-	fields := make([]sl.AttachmentField, 0)
-	for _, field := range attachment.Fields {
-		fields = append(fields, sl.AttachmentField{
-			Title: field.Title,
-			Value: field.Value,
-		})
-	}
+	as := make([]sl.Attachment, 0, len(attachments))
+	for _, at := range attachments {
+		fields := make([]sl.AttachmentField, 0)
+		for _, field := range at.Fields {
+			fields = append(fields, sl.AttachmentField{
+				Title: field.Title,
+				Value: field.Value,
+			})
+		}
 
-	a := sl.Attachment{
-		Pretext: attachment.Pretext,
-		Color:   attachment.Color,
-		Fields:  fields,
+		a := sl.Attachment{
+			Pretext: at.Pretext,
+			Color:   at.Color,
+			Fields:  fields,
+		}
+		as = append(as, a)
 	}
 
 	params := sl.PostMessageParameters{
-		Attachments: []sl.Attachment{a},
+		Attachments: as,
 		Username:    name,
 	}
 

@@ -49,8 +49,8 @@ func (p *Plugin) sendMessage(channel string) {
 	}
 	if len(fields) > 0 {
 		message := p.config.ResponseTemplates.GetText("show_schedule", nil)
-		attachment := createAttachment(message, fields)
-		p.client.SendAttachment(p.client.GetBotName(), attachment, channel)
+		attachments := createAttachments(message, fields)
+		p.client.SendAttachments(p.client.GetBotName(), attachments, channel)
 	} else {
 		message := p.config.ResponseTemplates.GetText("not_found_schedule", nil)
 		p.client.SendMessage(message, channel)
@@ -73,12 +73,13 @@ func (p *Plugin) getSecretPath() string {
 	return path.(string)
 }
 
-func createAttachment(pretext string, fields []slack.AttachmentField) slack.Attachment {
-	return slack.Attachment{
+func createAttachments(pretext string, fields []slack.AttachmentField) []slack.Attachment {
+	a := slack.Attachment{
 		Pretext: pretext,
 		Color:   "#3e6cf7",
 		Fields:  fields,
 	}
+	return []slack.Attachment{a}
 }
 
 func createAttachmentField(title string, value string) slack.AttachmentField {

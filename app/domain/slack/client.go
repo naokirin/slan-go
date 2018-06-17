@@ -16,7 +16,7 @@ type Attachment struct {
 // Client is interface slack client using plugin
 type Client interface {
 	SendMessage(msg string, channel string)
-	SendAttachment(name string, attachment Attachment, channel string)
+	SendAttachments(name string, attachments []Attachment, channel string)
 	UploadFile(title string, path string, channel string) (string, error)
 	GenerateReceivedEventChannel() chan Message
 	GetBotName() string
