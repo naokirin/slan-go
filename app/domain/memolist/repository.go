@@ -2,6 +2,7 @@ package memolist
 
 // Memo is memo interface
 type Memo interface {
+	GetID() uint
 	GetUser() string
 	GetText() string
 	GetKind() string

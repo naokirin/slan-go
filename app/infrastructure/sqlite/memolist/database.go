@@ -17,6 +17,11 @@ type Memo struct {
 
 var _ domain.Repository = (*Memo)(nil)
 
+// GetID return id
+func (m *Memo) GetID() uint {
+	return m.ID
+}
+
 // GetUser returns user id
 func (m *Memo) GetUser() string {
 	return m.User
@@ -72,7 +77,6 @@ func (m *Memo) Add(kind string, user string, text string) {
 func (m *Memo) Delete(v domain.Memo) bool {
 	db := connectDb()
 	defer db.Close()
-	d := Memo{Kind: v.GetKind(), User: v.GetUser(), Text: v.GetText()}
-	db.Delete(&d)
+	db.Where("id = ?", v.GetID()).Delete(&Memo{})
 	return true
 }
