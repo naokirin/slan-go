@@ -1,0 +1,3 @@
+not_found_vote_choises: "引数が足りません"
+over_ten_vote_choises: "選択肢は10個までです"
+not_found_vote: "投票が見つかりませんでした"

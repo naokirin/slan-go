@@ -42,6 +42,14 @@ func (g *Generator) Generate(config plugin.Config, client slack.Client) plugin.P
 	}
 }
 
+// ReceiveReactionAdded run received reaction_added
+func (p *Plugin) ReceiveReactionAdded(reactionAdded slack.Reaction) {
+}
+
+// ReceiveReactionRemoved run received reaction_added
+func (p *Plugin) ReceiveReactionRemoved(reactionRemoved slack.Reaction) {
+}
+
 // ReceiveMessage processes memolist plugin for a received message
 func (p *Plugin) ReceiveMessage(msg slack.Message) bool {
 	if !p.config.CheckEnabledMessage(msg) {

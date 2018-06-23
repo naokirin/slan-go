@@ -35,6 +35,14 @@ type Generator struct {
 	Repository Repository
 }
 
+// ReceiveReactionAdded run received reaction_added
+func (p *Plugin) ReceiveReactionAdded(reactionAdded slack.Reaction) {
+}
+
+// ReceiveReactionRemoved run received reaction_added
+func (p *Plugin) ReceiveReactionRemoved(reactionRemoved slack.Reaction) {
+}
+
 // ReceiveMessage runs received message
 func (p *Plugin) ReceiveMessage(msg slack.Message) bool {
 	if !p.config.CheckEnabledMessage(msg) {

@@ -2,9 +2,9 @@ package lgtmize
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
-	"os"
 
 	"github.com/naokirin/slan-go/app/domain/plugin"
 	"github.com/naokirin/slan-go/app/domain/slack"
@@ -41,6 +41,14 @@ func (g *Generator) Generate(config plugin.Config, client slack.Client) plugin.P
 		config:      config,
 		lgtmize:     g.LGTMize,
 	}
+}
+
+// ReceiveReactionAdded run received reaction_added
+func (p *Plugin) ReceiveReactionAdded(reactionAdded slack.Reaction) {
+}
+
+// ReceiveReactionRemoved run received reaction_added
+func (p *Plugin) ReceiveReactionRemoved(reactionRemoved slack.Reaction) {
 }
 
 // ReceiveMessage processes lgtm plugin for a received message

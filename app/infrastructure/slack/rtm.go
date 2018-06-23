@@ -17,13 +17,26 @@ type Client struct {
 }
 
 // SendMessage send message with RTM
-func (client Client) SendMessage(msg string, channel string) {
-	client.rtm.SendMessage(client.rtm.NewOutgoingMessage(msg, channel))
+func (client Client) SendMessage(msg string, channel string) s.Result {
+	c, t, _, e := client.api.SendMessage(channel, sl.MsgOptionText(msg, true))
+	return s.Result{
+		Channel:   c,
+		Timestamp: t,
+		Err:       e,
+	}
 }
 
-// SendAttachments send attachment
-func (client Client) SendAttachments(name string, attachments []s.Attachment, channel string) {
+// UpdateMessage update message for existing one
+func (client Client) UpdateMessage(text string, channel string, timestamp string) s.Result {
+	c, t, _, e := client.api.SendMessage(channel, sl.MsgOptionUpdate(timestamp), sl.MsgOptionText(text, true))
+	return s.Result{
+		Channel:   c,
+		Timestamp: t,
+		Err:       e,
+	}
+}
 
+func createAttachments(attachments []s.Attachment) []sl.Attachment {
 	as := make([]sl.Attachment, 0, len(attachments))
 	for _, at := range attachments {
 		fields := make([]sl.AttachmentField, 0)
@@ -42,12 +55,43 @@ func (client Client) SendAttachments(name string, attachments []s.Attachment, ch
 		as = append(as, a)
 	}
 
+	return as
+}
+
+// SendAttachments send attachment
+func (client Client) SendAttachments(username string, attachments []s.Attachment, channel string) s.Result {
 	params := sl.PostMessageParameters{
-		Attachments: as,
-		Username:    name,
+		Attachments: createAttachments(attachments),
+		Username:    username,
+		LinkNames:   1,
 	}
 
-	client.api.PostMessage(channel, "", params)
+	c, t, e := client.api.PostMessage(channel, "", params)
+	return s.Result{
+		Channel:   c,
+		Timestamp: t,
+		Err:       e,
+	}
+}
+
+// UpdateAttachments update attachments for existing message
+func (client Client) UpdateAttachments(username string, attachments []s.Attachment, channel string, timestamp string) s.Result {
+	ats := createAttachments(attachments)
+	attachmentsOpt := sl.MsgOptionAttachments(ats...)
+	opts := []sl.MsgOption{
+		attachmentsOpt,
+		sl.MsgOptionUpdate(timestamp),
+		sl.MsgOptionUser(username),
+	}
+	c, t, _, e := client.api.SendMessage(
+		channel,
+		opts...,
+	)
+	return s.Result{
+		Channel:   c,
+		Timestamp: t,
+		Err:       e,
+	}
 }
 
 // UploadFile upload file to slack
@@ -71,6 +115,18 @@ func (client Client) UploadFile(title string, path string, channel string) (stri
 	return file.URL, err
 }
 
+// AddReaction add reaction to message
+func (client Client) AddReaction(channel string, timestamp string, reaction string) error {
+	msgRef := sl.NewRefToMessage(channel, timestamp)
+	return client.api.AddReaction(reaction, msgRef)
+}
+
+// RemoveReaction remove reaction to message
+func (client Client) RemoveReaction(channel string, timestamp string, reaction string) error {
+	msgRef := sl.NewRefToMessage(channel, timestamp)
+	return client.api.RemoveReaction(reaction, msgRef)
+}
+
 // CreateClient create slack client for RTM
 func CreateClient(slackToken string) *Client {
 	api := sl.New(slackToken)
@@ -81,9 +137,14 @@ func CreateClient(slackToken string) *Client {
 }
 
 // GenerateReceivedEventChannel generate a channel of received incomming event
-func (client Client) GenerateReceivedEventChannel() chan s.Message {
-	out := make(chan s.Message)
-	go func() {
+func (client Client) GenerateReceivedEventChannel() s.ReceivedChans {
+	out := s.ReceivedChans{
+		Message:         make(chan s.Message),
+		ReactionAdded:   make(chan s.Reaction),
+		ReactionRemoved: make(chan s.Reaction),
+	}
+
+	go func(chans s.ReceivedChans) {
 		for msg := range client.rtm.IncomingEvents {
 			switch ev := msg.Data.(type) {
 			case *sl.MessageEvent:
@@ -108,13 +169,49 @@ func (client Client) GenerateReceivedEventChannel() chan s.Message {
 					Channel:     ev.Channel,
 					ChannelName: channelName,
 				}
-				out <- message
+				out.Message <- message
+			case *sl.ReactionAddedEvent:
+				// message と同じ情報を返せるようにする
+				reaction := s.Reaction{
+					Type:     ev.Type,
+					User:     ev.User,
+					ItemUser: ev.ItemUser,
+					Item: s.ReactionItem{
+						Type:        ev.Item.Type,
+						Channel:     ev.Item.Channel,
+						File:        ev.Item.File,
+						FileComment: ev.Item.FileComment,
+						Timestamp:   ev.Item.Timestamp,
+					},
+					Reaction:       ev.Reaction,
+					EventTimestamp: ev.EventTimestamp,
+				}
+				out.ReactionAdded <- reaction
+			case *sl.ReactionRemovedEvent:
+				// message と同じ情報を返せるようにする
+				reaction := s.Reaction{
+					Type:     ev.Type,
+					User:     ev.User,
+					ItemUser: ev.ItemUser,
+					Item: s.ReactionItem{
+						Type:        ev.Item.Type,
+						Channel:     ev.Item.Channel,
+						File:        ev.Item.File,
+						FileComment: ev.Item.FileComment,
+						Timestamp:   ev.Item.Timestamp,
+					},
+					Reaction:       ev.Reaction,
+					EventTimestamp: ev.EventTimestamp,
+				}
+				out.ReactionRemoved <- reaction
 			default:
 			}
 
 		}
-		close(out)
-	}()
+		close(out.Message)
+		close(out.ReactionAdded)
+		close(out.ReactionRemoved)
+	}(out)
 
 	return out
 }
@@ -127,6 +224,12 @@ func (client Client) GetBotName() string {
 		return info.User.Name
 	}
 	return user.RealName
+}
+
+// GetBotUserID returns bot id
+func (client Client) GetBotUserID() string {
+	info := client.rtm.GetInfo()
+	return info.User.ID
 }
 
 // GetEmoji returns all emoji
@@ -151,4 +254,13 @@ func (client Client) ConvertChannelNameToID(name string) (string, bool) {
 		}
 	}
 	return "", false
+}
+
+// GetUserName returns user display name
+func (client Client) GetUserName(id string) (string, error) {
+	user, err := client.rtm.GetUserInfo(id)
+	if err != nil {
+		return "", err
+	}
+	return user.Profile.DisplayName, nil
 }
